@@ -40,11 +40,9 @@ final welcomeItems = [
 
 
 const accrediationLogs = [
-
   'assets/img/hefra_logo.png',
   'assets/img/nhis-logo.png',
   'assets/img/safecare-logo.png'
-
 ];
 
 
