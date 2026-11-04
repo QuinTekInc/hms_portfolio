@@ -334,8 +334,9 @@ class _OtpTextFieldState extends State<OtpTextField> {
               ],
 
               onChanged: (newValue) {
-                if (textControllers[index].text.length == 1 && index != 5)
+                if (textControllers[index].text.length == 1 && index != 5) {
                   FocusScope.of(context).nextFocus();
+                }
 
                 String otpText = '';
 

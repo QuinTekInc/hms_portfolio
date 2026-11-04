@@ -96,10 +96,9 @@ class _EventsPageState extends State<EventsPage> {
           ), 
 
 
-          SliverToBoxAdapter(
-            child: SectionContainer(
-              child: _buildCategoryChips(),
-            ),
+          SliverAppBar(
+            title: _buildCategoryChips(),
+            pinned: true,
           ),
 
 
@@ -169,6 +168,7 @@ class _EventsPageState extends State<EventsPage> {
     ];
 
     return SectionContainer(
+      backgroundColor: Colors.grey.shade200,
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -181,7 +181,7 @@ class _EventsPageState extends State<EventsPage> {
             shrinkWrap: true,
             itemCount: eventCategories.length, 
             itemBuilder: (_, index){
-
+      
               final (label, icon, color, category) = eventCategories[index];
           
               return CustomChip(  

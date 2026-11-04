@@ -23,11 +23,8 @@ class _PageHeaderState extends State<PageHeader> {
       value: 1,
       title: 'Home', 
       onPressed: (){
-
         if(GoRouterState.of(context).name == 'home') return;
-
         context.go('/');
-        
       }, 
       icon: Icons.home
     ),
@@ -36,11 +33,8 @@ class _PageHeaderState extends State<PageHeader> {
       value: 2,
       title: 'Our Services', 
       onPressed: (){
-
         if(GoRouterState.of(context).name == 'services') return;
-
         context.go('our-services');
-
       }, 
       icon: Icons.info
     ),
@@ -186,8 +180,8 @@ class _PageHeaderState extends State<PageHeader> {
   }
 
   Widget _buildMobileMenu(){
-    return PopupMenuButton(
 
+    return PopupMenuButton(
       color: Colors.blue.shade800,
       menuPadding: const EdgeInsets.all(8),
       shape: RoundedRectangleBorder(
@@ -216,41 +210,39 @@ class _PageHeaderState extends State<PageHeader> {
 
       popUpAnimationStyle: AnimationStyle(
         curve: Curves.easeIn, 
-        duration: Duration(milliseconds: 500)
+        duration: Duration(milliseconds: 200)
       ),
 
 
       itemBuilder: (_) => headerMenuItems.map((menuItem){
         return PopupMenuItem(
           value: menuItem.value,
-          child: GestureDetector(
-            onTap: menuItem.onPressed,
-            child: Container(
-              padding: !menuItem.isSpecialMenu ? null : const EdgeInsets.all(8),
-              decoration: !menuItem.isSpecialMenu ? null : BoxDecoration(  
-                color: Colors.amber, 
-                borderRadius: BorderRadius.circular(12)
-              ),
-              child: Row(  
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 8,
-                children: [
-                  if(menuItem.icon != null)
-                    Icon(
-                      menuItem.icon, 
-                      size: 25, 
-                      color: Colors.white,
-                    )
-                  else 
-                    SizedBox.shrink(), 
-                  
-                  CustomText(  
-                    menuItem.title,
-                    textColor: menuItem.isSpecialMenu ? Colors.blue.shade700 : Colors.white,
+          onTap: menuItem.onPressed,
+          child: Container(
+            padding: !menuItem.isSpecialMenu ? null : const EdgeInsets.all(8),
+            decoration: !menuItem.isSpecialMenu ? null : BoxDecoration(  
+              color: Colors.amber, 
+              borderRadius: BorderRadius.circular(12)
+            ),
+            child: Row(  
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 8,
+              children: [
+                if(menuItem.icon != null)
+                  Icon(
+                    menuItem.icon, 
+                    size: 25, 
+                    color: Colors.white,
                   )
-                ],
-              ),
+                else 
+                  SizedBox.shrink(), 
+                
+                CustomText(  
+                  menuItem.title,
+                  textColor: menuItem.isSpecialMenu ? Colors.blue.shade700 : Colors.white,
+                )
+              ],
             ),
           ),
         );
