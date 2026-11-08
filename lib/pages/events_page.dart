@@ -102,6 +102,11 @@ class _EventsPageState extends State<EventsPage> {
           ),
 
 
+          if(!true) SliverToBoxAdapter(  
+            child: _buildFlagShipEvent(),
+          ),
+
+
           SliverToBoxAdapter(  
             child: _buildEventsView(),
           ),
@@ -203,6 +208,13 @@ class _EventsPageState extends State<EventsPage> {
 
 
 
+  Widget _buildFlagShipEvent(){
+
+    return SizedBox.shrink();
+  }
+
+
+
   Widget _buildEventsView(){
     
     return SectionContainer(  
@@ -215,6 +227,7 @@ class _EventsPageState extends State<EventsPage> {
             mainAxisExtent: 370,
             itemCount: sampleEvents.length,
             itemBuilder: (context, index) => revealAnimationWidget(
+              delay: Duration(milliseconds: 200 + index),
               child: EventCard(event: sampleEvents[index],
               )
             ),

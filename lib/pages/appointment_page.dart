@@ -118,6 +118,7 @@ class _BookAppointPageState extends State<BookAppointPage> {
               child: SingleChildScrollView(  
                 child: Column(
                   children: [
+                    
                     _buildContent(),
       
                     SizedBox(height: 50,),

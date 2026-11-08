@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:hms_portfolio/components/page_header.dart';
 import 'package:hms_portfolio/pages/claude_appointment.dart';
+import 'package:hms_portfolio/pages/claude_services.dart' hide OurServicesPage;
 import 'package:hms_portfolio/pages/events_page.dart';
 import 'package:hms_portfolio/pages/gallery_page.dart';
 import 'package:hms_portfolio/components/text.dart';
@@ -32,7 +33,7 @@ final appRouter = GoRouter(
       path: '/our-services', 
       name: 'services',
       builder: (context, state){
-        return const OurServicesPage();
+        return  OurServicesPage();
       }
     ),
 

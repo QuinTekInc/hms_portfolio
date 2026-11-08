@@ -1,9 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hms_portfolio/bloc/navigation_bloc.dart';
+import 'package:hms_portfolio/components/animations.dart';
 import 'package:hms_portfolio/components/button.dart';
-import 'package:hms_portfolio/components/responsive_util.dart';
 import 'package:hms_portfolio/components/text.dart';
 import 'package:hms_portfolio/components/shared_functions.dart';
 
@@ -80,7 +81,6 @@ class _PageHeaderState extends State<PageHeader> {
       isSpecialMenu: true
     )
 
-
   ];
 
   @override
@@ -96,8 +96,8 @@ class _PageHeaderState extends State<PageHeader> {
             child: Image.asset(  
               'assets/img/mcg-logo.png', 
               fit: BoxFit.cover,
-              height: 50,
-              width: 50,
+              height: 40,
+              width: 40,
             ),
           ),
 
@@ -106,11 +106,7 @@ class _PageHeaderState extends State<PageHeader> {
           HeaderText(
             'Methodist Hospital Aburaso',
             textColor: Colors.white, 
-            fontSize: ResponsiveUtil.sizeBasedValue(
-              context: context,  
-              mobileValue: 16.toDouble(), 
-              desktopValue: 20.toDouble()
-            )
+            fontSize: fluidInterpolation(context, 15, 18)
           ),
 
           Spacer(), 
@@ -206,7 +202,6 @@ class _PageHeaderState extends State<PageHeader> {
       borderRadius: BorderRadius.circular(12),
 
       padding: EdgeInsets.zero,
-
 
       popUpAnimationStyle: AnimationStyle(
         curve: Curves.easeIn, 

@@ -130,3 +130,29 @@ class NewsArticle {
 }
 
 
+
+class HospitalService{
+  
+  String serviceId;
+  String serviceName;
+  String coverImage;
+  String serviceDetail;
+
+  HospitalService({
+    required this.serviceId,
+    required this.serviceName, 
+    required this.coverImage, 
+    required this.serviceDetail
+  });
+
+
+  factory HospitalService.fromJson(Map<String, dynamic> jsonMap){
+    return HospitalService(
+      serviceId: jsonMap['id'],
+      serviceName: jsonMap['service_name'],
+      coverImage: jsonMap['cover_image'],
+      serviceDetail: jsonMap['detail']
+    );
+  }
+}
+
