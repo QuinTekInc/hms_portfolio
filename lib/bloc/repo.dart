@@ -86,4 +86,18 @@ class Repository{
     return responseBody;
   }
 
+
+  static Future<List<GalleryItem>> fetchGalleryItems() async {
+
+    final response = await serverConnector.getRequest(endpoint: '');
+
+    if(response.statusCode != 200){
+      throw Exception('An unknown error occurred: ${response.statusCode}');
+    }
+
+    final responseBody = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+
+    return responseBody.map((jsonMap) => GalleryItem.fromJson(jsonMap)).toList();
+  }
+
 }
