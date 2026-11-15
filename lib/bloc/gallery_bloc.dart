@@ -26,7 +26,7 @@ class GalleryCubit extends Cubit<GalleryState>{
 
   GalleryCubit() : super(GalleryInitial());
 
-  void fetchGalleryImages() async {
+  void fetchGalleryItems() async {
 
     emit(GalleryLoading());
 

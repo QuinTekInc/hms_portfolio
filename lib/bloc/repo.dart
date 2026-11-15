@@ -7,10 +7,9 @@ class Repository{
 
   static Future<void> bookAppointment(Map<String, dynamic> appointmentBody) async {
     final response = await serverConnector.postRequest(
-      endpoint: '',
+      endpoint: 'book-appoinment/',
       body: jsonEncode(appointmentBody)
     );
-
 
     if(response.statusCode != 200){
       throw Exception("Could not send appoinment request: ${response.statusCode}");
@@ -19,7 +18,8 @@ class Repository{
 
   static Future<List<NewsArticle>> getNews() async {
 
-    final response = await serverConnector.getRequest(endpoint: 'gallery-images/');
+    final response = await serverConnector.getRequest(
+      endpoint: 'news-articles/');
 
     if(response.statusCode != 200){
       throw Exception('An error occurred: ${response.statusCode}');
@@ -27,24 +27,32 @@ class Repository{
 
     final responseBody = List<Map<String, dynamic>>.from(jsonDecode(response.body));
 
-    return responseBody.map((jsonMap) => NewsArticle.fromJson(jsonMap)).toList();
+    return responseBody.map(
+      (jsonMap) => NewsArticle.fromJson(jsonMap)).toList();
 
   }
 
-  static Future<dynamic> getGalleryImages() async {
+  static Future<List<GalleryItem>> fetchGalleryItems() async {
 
-    final response = await serverConnector.getRequest(endpoint: '');
+    final response = await serverConnector.getRequest(
+      endpoint: 'gallery/');
 
     if(response.statusCode != 200){
       throw Exception("Could not fetch gallery: ${response.statusCode}");
     }
+
+    final responseBody = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+
+    return responseBody.map(
+      (jsonMap) => GalleryItem.fromJson(jsonMap)).toList();
 
   }
 
 
   static Future<List<HospitalEvent>> getEvents() async {
 
-    final response = await serverConnector.getRequest(endpoint: '/events/');
+    final response = await serverConnector.getRequest(
+      endpoint: 'events/');
 
     if(response.statusCode != 200){
       throw Exception("Could not fetch events: ${response.statusCode}");
@@ -60,7 +68,7 @@ class Repository{
   static Future<void> subscribeNewsLetter(String email) async {
 
     final response = await serverConnector.postRequest(
-      endpoint: 'newsletter-subscribe/', 
+      endpoint: 'newsletter/subscribe/', 
       body: jsonEncode({'email': email})
     );
 
@@ -68,11 +76,11 @@ class Repository{
       throw Exception("Could not subcribe to newsletter: ${response.statusCode}");
     }
 
-    await Future.delayed(Duration(seconds: 3), (){});
   }
 
 
-  static Future<dynamic> fetchHospitalServices() async {
+  static Future<List<HospitalService>> fetchHospitalServices() async {
+    
     final response = await serverConnector.getRequest(
       endpoint: 'hospital-services/');
 
@@ -81,23 +89,13 @@ class Repository{
     }
 
 
-    final responseBody = jsonDecode(response.body);
-
-    return responseBody;
-  }
-
-
-  static Future<List<GalleryItem>> fetchGalleryItems() async {
-
-    final response = await serverConnector.getRequest(endpoint: '');
-
-    if(response.statusCode != 200){
-      throw Exception('An unknown error occurred: ${response.statusCode}');
-    }
-
     final responseBody = List<Map<String, dynamic>>.from(jsonDecode(response.body));
 
-    return responseBody.map((jsonMap) => GalleryItem.fromJson(jsonMap)).toList();
+    return responseBody.map(
+      (jsonMap) => HospitalService.fromJson(jsonMap)).toList();
   }
+
+
+  
 
 }
