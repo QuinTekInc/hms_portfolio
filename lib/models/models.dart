@@ -26,39 +26,146 @@ extension EventCategoryX on EventCategory {
       };
 }
 
-class HospitalEvent {
-  final String title;
-  final String description;
-  final DateTime date;
-  final String time;
-  final String location;
 
+enum EventStatus{pending, ongoing, past, cancelled, unkown}
+
+extension EventStatusX on EventStatus{
+  String get label => switch(this){
+    EventStatus.pending => 'pending',
+    EventStatus.ongoing => 'ongoing', 
+    EventStatus.past => 'past',
+    EventStatus.cancelled => 'cancelled', 
+    EventStatus.unkown => 'unkown'
+  };
+
+  Color get color => switch(this){
+    EventStatus.pending => Colors.blue.shade900,
+    EventStatus.ongoing => Colors.green.shade900, 
+    EventStatus.past => Colors.amber,
+    EventStatus.cancelled => Colors.red.shade700, 
+    EventStatus.unkown => Colors.orange.shade700
+  };
+}
+
+class HospitalEvent {
+  final String id;
+  final String name;
   final EventCategory category;
+  final String? theme;
+  final String description;
+  final String? coverImage;
+  final DateTime startDate;
+  final DateTime? endDate;
+  final String startTime;
+  final String? endTime;
+  final String location;
+  final bool isFlagshipEvent;
+  final bool requiresRegistration;
 
   const HospitalEvent({
-    required this.title,
+    required this.id,
+    required this.name,
+    this.theme,
     required this.description,
-    required this.date,
-    required this.time,
+    this.coverImage,
+    required this.startDate,
+    this.endDate,
+    required this.startTime,
+    this.endTime,
     required this.location,
     required this.category,
+    this.isFlagshipEvent = false, 
+    this.requiresRegistration = false,
   });
 
 
-
+  //TODO: Create a function to parse 
   factory HospitalEvent.fromJson(Map<String, dynamic> jsonMap){
 
     final now = DateTime.now();
 
-    return HospitalEvent(  
-      title: 'Hospial Event',
-      description: 'Description of event', 
-      date: now, 
-      time: '${now.hour % 12}:${now.minute} ${now.hour < 12 ? 'am':'pm'}', 
-      location: 'Hospital premises', 
-      category: EventCategory.screening
+    return HospitalEvent( 
+      id: jsonMap['id'], 
+      name: jsonMap['event_name'],
+      theme: jsonMap['theme'] ?? ' ',
+      description: jsonMap['description'], 
+      coverImage: jsonMap['cover_image'],
+      startDate: DateTime.parse(jsonMap['start_date']), 
+      endDate: jsonMap.containsKey('end_date') ? DateTime.parse(jsonMap['end_date']) : null,
+      startTime: '${now.hour % 12}:${now.minute} ${now.hour < 12 ? 'am':'pm'}', 
+      endTime: jsonMap['end_time'],
+      location: jsonMap['location'], 
+      category: EventCategory.screening,
     );
   }
+}
+
+
+enum RegistrationFieldType{
+  text, number, email, phone, select, date, checkbox, unknown;
+
+  static RegistrationFieldType fromString(String typeString){
+
+    for(final rtype in RegistrationFieldType.values){
+      if(rtype.typeString == typeString) return rtype;
+    }
+
+    return unknown;
+
+  }
+}
+
+
+extension RegistrationFieldTypeX on RegistrationFieldType{
+  String get typeString => switch(this){
+    RegistrationFieldType.text => 'text',
+    RegistrationFieldType.phone => 'phone',
+    RegistrationFieldType.number => 'number',
+    RegistrationFieldType.email => 'email', 
+    RegistrationFieldType.date => 'date',
+    RegistrationFieldType.checkbox => 'checkbox', 
+    RegistrationFieldType.select => 'select',
+    RegistrationFieldType.unknown => 'unknown'
+  };
+}
+
+class RegistrationField{
+
+  final int id;
+  final String eventId;
+  final String fieldKey;
+  final String label;
+  final bool isRequired;
+  final List<String>? options;
+  final int order;
+  final RegistrationFieldType fieldType;
+
+  RegistrationField({
+    required this.id, 
+    required this.eventId, 
+    required this.fieldKey, 
+    required this.label,
+    this.isRequired = true, 
+    this.options, 
+    required this.order, 
+    required this.fieldType
+  });
+
+
+  factory RegistrationField.fromJson(Map<String, dynamic> jsonMap){
+
+    return RegistrationField( 
+      id: jsonMap['id'],
+      eventId: jsonMap['event_id'],
+      fieldKey: jsonMap['key'],
+      label: jsonMap['label'], 
+      isRequired: jsonMap['required'] ?? true, 
+      options: List<String>.from(jsonMap['options']), 
+      fieldType: RegistrationFieldType.fromString(jsonMap['field_type']), 
+      order: jsonMap['order']
+    );
+  }
+
 }
 
 
@@ -131,18 +238,45 @@ class NewsArticle {
 
 
 
+
+enum ServiceType{
+  general, specialized, unknown;
+
+  static ServiceType fromString(String serviceString){
+
+    for(final ServiceType serviceType in ServiceType.values){
+      if(serviceType.label == serviceString) return serviceType;
+    }
+
+    return unknown;
+  }
+}
+
+extension ServiceTypeX on ServiceType{
+
+  String get label => switch(this){
+    ServiceType.general => 'general',
+    ServiceType.specialized => 'specialized',
+    ServiceType.unknown => 'unkown'
+  };
+
+}
+
 class HospitalService{
   
-  String serviceId;
-  String serviceName;
-  String coverImage;
-  String serviceDetail;
+  final String serviceId;
+  final String serviceName;
+  final String? coverImage;
+  final String serviceDetail;
+  final ServiceType serviceType;
+
 
   HospitalService({
     required this.serviceId,
     required this.serviceName, 
     required this.coverImage, 
-    required this.serviceDetail
+    required this.serviceDetail,
+    required this.serviceType
   });
 
 
@@ -151,8 +285,34 @@ class HospitalService{
       serviceId: jsonMap['id'],
       serviceName: jsonMap['service_name'],
       coverImage: jsonMap['cover_image'],
-      serviceDetail: jsonMap['detail']
+      serviceDetail: jsonMap['detail'], 
+      serviceType: ServiceType.fromString(jsonMap['category'])
     );
   }
 }
 
+
+
+
+
+class GalleryItem{
+  String id;
+  String description;
+  String imageUrl;
+
+  GalleryItem({
+    required this.id, 
+    required this.imageUrl, 
+    required this.description
+  });
+
+
+  factory GalleryItem.fromJson(Map<String, dynamic> jsonMap){
+
+    return GalleryItem(  
+      id: jsonMap['id'],
+      description: jsonMap['description'],
+      imageUrl: jsonMap['image']
+    );
+  }
+}

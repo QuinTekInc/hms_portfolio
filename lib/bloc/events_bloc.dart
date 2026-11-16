@@ -76,3 +76,54 @@ class EventsCubit extends Cubit<EventsState>{
 
   }
 }
+
+
+
+//==================================================================
+//EVENT REGISTRATION BLOC
+//==================================================================
+
+abstract class RegistrationState{}
+class RegistrationInitial extends RegistrationState{}
+class RegistrationLoading extends RegistrationState{}
+
+class RegistrationLoaded extends RegistrationState{
+  final List<RegistrationField> registrationFields;
+
+  RegistrationLoaded(this.registrationFields);
+
+}
+
+class RegistrationError extends RegistrationState{
+  final String message;
+  RegistrationError(this.message);
+}
+
+
+class RegistrationCubit extends Cubit<RegistrationState>{
+
+  final HospitalEvent hospitalEvent;
+
+  RegistrationCubit(this.hospitalEvent) : super(RegistrationInitial());
+
+  Future<void> fetchRegistrationFields() async {
+    emit(RegistrationLoading());
+
+    try{
+
+      final fields = await Repository.getEventRegistrationFields(hospitalEvent.id);
+      emit(RegistrationLoaded(fields + sampleFields));
+
+    }catch(ex, trace){
+      debugPrintStack(label: ex.toString(), stackTrace: trace);
+      emit(RegistrationError(ex.toString()));
+    }
+  }
+
+
+  Future<void> submitRegistration({required String email, required Map<String, dynamic> answers}) async {
+
+  }
+
+  
+}

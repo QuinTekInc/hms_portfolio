@@ -19,6 +19,7 @@ class CustomText extends StatelessWidget {
   final TextOverflow? overflow;
   final bool softwrap;
   final double? height;
+  final double? letterSpacing;
 
   const CustomText(
     this.text, {
@@ -33,6 +34,7 @@ class CustomText extends StatelessWidget {
     this.overflow,
     this.softwrap = true,
     this.height,
+    this.letterSpacing
   });
 
   @override
@@ -52,6 +54,7 @@ class CustomText extends StatelessWidget {
           fontStyle: fontStyle,
           fontFamily: "Poppins",
           height: height,
+          letterSpacing: letterSpacing
         ),
       ),
     );
@@ -108,6 +111,51 @@ class HeaderText extends StatelessWidget {
     );
   }
 }
+
+
+class Pill extends StatelessWidget {
+  const Pill({
+    super.key,
+    required this.label,
+    required this.background,
+    required this.foreground,
+    required this.icon,
+  });
+
+  final String label;
+  final Color background;
+  final Color foreground;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+
+          Icon(icon, size: 14, color: foreground),
+
+          const SizedBox(width: 6),
+
+          CustomText(
+            label,
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.3,
+            textColor: foreground,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 //todo: custom text field
 class CustomTextField extends StatelessWidget {

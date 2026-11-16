@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:hms_portfolio/components/responsive_util.dart';
+import 'package:hms_portfolio/components/animations.dart';
 import  'text.dart';
 
 class BannerSlide {
@@ -131,10 +131,21 @@ class _SlideView extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
+
+        //background image widget.
+
         Image.asset(slide.image, fit: BoxFit.cover, cacheWidth: 1600),
+
+        //color filter box. 
         ColoredBox(color: Colors.blue.shade900.withValues(alpha: 0.6)),
+
+
+
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 36),
+          padding: EdgeInsets.symmetric(
+            vertical: fluidInterpolation(context, 24, 16), 
+            horizontal: fluidInterpolation(context, 16, 32)
+          ),
           child: Align(
             alignment: Alignment.bottomLeft,
             child: Column(
@@ -143,18 +154,22 @@ class _SlideView extends StatelessWidget {
               children: [
                 HeaderText(
                   slide.title,
-                  fontSize: ResponsiveUtil.isDesktop(context) ? 32 : 24,
+                  fontSize: fluidInterpolation(context, 24, 52),
                   softwrap: true,
                   textColor: Colors.white,
                 ),
                 const SizedBox(height: 6),
+
+
+
+                //text animation
                 AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
                       slide.subtitle,
-                      textStyle: const TextStyle(
+                      textStyle: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: fluidInterpolation(context, 14, 16),
                         fontFamily: 'Poppins'
                       ),
                       speed: const Duration(milliseconds: 50),

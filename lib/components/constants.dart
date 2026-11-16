@@ -1,4 +1,5 @@
 
+import 'package:flutter/material.dart';
 import 'package:hms_portfolio/models/models.dart';
 
 
@@ -152,9 +153,161 @@ final List<NewsArticle> sampleNews = [
   ),
 ];
 
+
+final sampleEvents = [
+  HospitalEvent(
+    id: '1',
+    name: 'Diabetes Awareness Talk',
+    description:
+        'Learn how to recognise early signs, manage blood sugar and eat well with our endocrinology team.',
+    startDate: DateTime(2026, 11, 7),
+    startTime: '10:00 AM',
+    location: 'Main Auditorium',
+    category: EventCategory.healthTalk,
+    coverImage: 'https://www.nationalbreastcancer.org/wp-content/uploads/2026/07/bcam-graphic-5-high-res-scaled.png',
+    isFlagshipEvent: true, 
+    requiresRegistration: true
+  ),
+
+  HospitalEvent(
+    id: '2',
+    name: 'Free Blood Pressure Screening',
+    description:
+        'Walk in for a quick, free check-up with our nurses. No appointment needed.',
+    startDate: DateTime(2026, 11, 12),
+    startTime: '8:00 AM',
+    location: 'Outpatient Lobby',
+    category: EventCategory.screening,
+  ),
+
+  HospitalEvent(
+    id: '3',
+    name: 'First Aid & CPR Workshop',
+    description:
+        'Hands-on training in life-saving skills for schools, workplaces and families.',
+    startDate: DateTime(2026, 11, 19),
+    startTime: '2:00 PM',
+    location: 'Training Room B',
+    category: EventCategory.training,
+  ),
+
+  HospitalEvent(
+    id: '4',
+    name: 'Community Health Walk',
+    description:
+        'Join staff and neighbours for a friendly 5 km walk promoting an active lifestyle.',
+    startDate: DateTime(2026, 11, 28),
+    startTime: '6:30 AM',
+    location: 'Hospital Gate',
+    category: EventCategory.community,
+  ),
+
+  HospitalEvent(
+    id: '5',
+    name: "Maternal & Child Health Day",
+    description:
+        'Talks on antenatal care, nutrition and immunisation, with free baby weighing.',
+    startDate: DateTime(2026, 12, 3),
+    startTime: '9:00 AM',
+    location: 'Maternity Wing',
+    category: EventCategory.healthTalk,
+  ),
+
+  HospitalEvent(
+    id: '6',
+    name: 'Free Eye & Vision Screening',
+    description:
+        'Get your eyes checked by our ophthalmology team and learn how to protect your sight.',
+    startDate: DateTime(2026, 12, 10),
+    startTime: '9:00 AM',
+    location: 'Eye Clinic',
+    category: EventCategory.screening,
+  ),
+];
+
 const months = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];
 
 String formatDate(DateTime d) => '${d.day} ${months[d.month - 1]} ${d.year}';
+
+
+
+final sampleFields = <RegistrationField>[
+  RegistrationField(
+    id: 1,
+    eventId: '1',
+    fieldKey: 'full_name',
+    label: 'Full name',
+    order: 1,
+    fieldType: RegistrationFieldType.text,
+  ),
+  RegistrationField(
+    id: 2,
+    eventId: '1',
+    fieldKey: 'email',
+    label: 'Email address',
+    order: 2,
+    fieldType: RegistrationFieldType.email,
+  ),
+  RegistrationField(
+    id: 3,
+    eventId: '1',
+    fieldKey: 'phone',
+    label: 'Phone number',
+    order: 3,
+    fieldType: RegistrationFieldType.phone,
+  ),
+  RegistrationField(
+    id: 4,
+    eventId: '1',
+    fieldKey: 'date_of_birth',
+    label: 'Date of birth',
+    order: 4,
+    fieldType: RegistrationFieldType.date,
+  ),
+  RegistrationField(
+    id: 5,
+    eventId: '1',
+    fieldKey: 'party_size',
+    label: 'Number of people attending',
+    order: 5,
+    fieldType: RegistrationFieldType.number,
+  ),
+  RegistrationField(
+    id: 6,
+    eventId: '1',
+    fieldKey: 'screening_type',
+    label: 'Screening you are interested in',
+    order: 6,
+    fieldType: RegistrationFieldType.select,
+    options: ['Blood pressure', 'Blood sugar', 'Eye test', 'General check-up'],
+  ),
+  RegistrationField(
+    id: 7,
+    eventId: '1',
+    fieldKey: 'first_time',
+    label: 'This is my first time attending',
+    isRequired: false,
+    order: 7,
+    fieldType: RegistrationFieldType.checkbox,
+  ),
+  RegistrationField(
+    id: 8,
+    eventId: '1',
+    fieldKey: 'consent',
+    label: 'I agree to be contacted about this event',
+    order: 8,
+    fieldType: RegistrationFieldType.checkbox,
+  ),
+];
+
+
+class Constants{
+  static Color navy = Colors.blue.shade900;
+  static const Color muted = Color(0xFF5B7480);
+  static const Color ink = Color(0xFF0D2A4A);
+  static const Color surface = Color(0xFFF4F8FB);
+  static const Color greyBorder = Color(0xFFE3ECEF);
+}

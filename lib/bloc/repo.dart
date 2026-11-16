@@ -96,6 +96,27 @@ class Repository{
   }
 
 
+  static Future<List<RegistrationField>> getEventRegistrationFields(String hospitalEventId) async {
+
+
+    // final response = await serverConnector.getRequest(
+    //   endpoint: 'events/$hospitalEventId/fields/');
+
+    // if(response.statusCode != 200){
+    //   throw Exception('Could not fetch event fields: ${response.statusCode}');
+    // }
+
+    // final responseBody = List<Map<String, dynamic>>.from(
+    //   jsonDecode(response.body));
+
+
+    // return responseBody.map(
+    //   (jsonMap) => RegistrationField.fromJson(jsonMap)).toList();
+
+    return [];
+  }
+
+
   
 
 }

@@ -240,6 +240,7 @@ class Homepage extends StatelessWidget {
 
     return SectionContainer(
       backgroundColor: Colors.blue.shade50,
+      useDefaultMaxWidth: false,
       child: ResponsiveGrid(  
         children: stats.map((item)=> StatContainer(
           icon: item.$1, 
@@ -399,17 +400,15 @@ class Homepage extends StatelessWidget {
 
           HeaderText.withResponsiveSize('Our Accreditations'),
 
-          Center(  
-            child: ResponsiveGrid.builder(  
-              itemCount: accrediationLogs.length,
-              itemBuilder: (_, index){
-                return Image.asset(  
-                  accrediationLogs[index],
-                  height: 80,
-                  width: 120,
-                );
-              },
-            )
+          ResponsiveGrid.builder(  
+            itemCount: accrediationLogs.length,
+            itemBuilder: (_, index){
+              return Image.asset(  
+                accrediationLogs[index],
+                height: 80,
+                width: 120,
+              );
+            },
           )
 
           
@@ -648,7 +647,7 @@ class Homepage extends StatelessWidget {
 
           
           ResponsiveGrid(
-            mainAxisExtent: 230,
+            mainAxisExtent: 240,
             children: gridViewChildren,
           )
           
@@ -664,6 +663,7 @@ class Homepage extends StatelessWidget {
   Widget _buildTestimonial(BuildContext context){
 
     return SectionContainer(
+      useDefaultMaxWidth: false,
       child: Column(  
         spacing: 12,
         children: [
@@ -715,61 +715,51 @@ class WorkingScheduleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final horizontal = width < 600 ? 16.0 : 48.0;
-
-    return Container(
-      width: double.infinity,
-      color: Colors.blue.shade50,
-      padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: 56),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1000),
-          child: Column(
-
+    
+    return SectionContainer(
+      backgroundColor: Colors.blue.shade50,
+      child: Column(
+        children: [
+        
+          HeaderText.withResponsiveSize('Working Schedule'),
+           // adjust if needed
+          const SizedBox(height: 8),
+        
+          CustomText('Visit us during these hours.'),
+           // adjust if needed
+          const SizedBox(height: 32),
+        
+          ResponsiveGrid(  
             children: [
-
-              HeaderText.withResponsiveSize('Working Schedule'),
-               // adjust if needed
-              const SizedBox(height: 8),
-
-              CustomText('Visit us during these hours.'),
-               // adjust if needed
-              const SizedBox(height: 32),
-
-              ResponsiveGrid(  
-                children: [
-                  for(final schedule in _schedules) _ScheduleCard(
-                    day: schedule['day']!, 
-                    hours: schedule['hours']!
-                  )
-                ],
-              ),
-            
-              const SizedBox(height: 24),
-
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.red.shade200),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.local_hospital, color: Colors.red.shade700),
-                    const SizedBox(width: 12),
-                    Flexible(
-                      child: CustomText('Emergency services are available 24/7.'), // adjust if needed
-                    ),
-                  ],
-                ),
-              ),
+              for(final schedule in _schedules) _ScheduleCard(
+                day: schedule['day']!, 
+                hours: schedule['hours']!
+              )
             ],
           ),
-        ),
+        
+          const SizedBox(height: 24),
+        
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.red.shade50,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.red.shade200),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.local_hospital, color: Colors.red.shade700),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: CustomText('Emergency services are available 24/7.'), // adjust if needed
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

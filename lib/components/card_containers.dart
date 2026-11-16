@@ -1,6 +1,10 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hms_portfolio/bloc/events_bloc.dart';
 import 'package:hms_portfolio/components/responsive_util.dart';
+import 'package:hms_portfolio/pages/event_registeration_page.dart';
 import 'text.dart';
 import 'package:hms_portfolio/models/models.dart';
 
@@ -11,10 +15,19 @@ class SectionContainer extends StatelessWidget {
   final Widget child;
   final Color? backgroundColor;
 
+  final double? _maxWidth;
+  final bool _useDefaultMaxWidth;
+  final double? _minHeight;
+  final double? _maxHeight;
+
   const new({
     super.key,
     required this.child, 
-    this.backgroundColor
+    this.backgroundColor, 
+    this._maxWidth, 
+    this._useDefaultMaxWidth = true,
+    this._minHeight,
+    this._maxHeight
   });
 
   @override
@@ -22,6 +35,8 @@ class SectionContainer extends StatelessWidget {
     return Container( 
       width: double.infinity,
       color: backgroundColor, 
+      alignment: Alignment.center,
+
       padding: EdgeInsets.symmetric( 
         horizontal: ResponsiveUtil.sizeBasedValue<double>( 
           context: context, 
@@ -30,7 +45,16 @@ class SectionContainer extends StatelessWidget {
         ),
         vertical: 24
       ),
-      child: child,
+
+      child: ConstrainedBox(  
+        constraints: BoxConstraints( 
+          maxWidth: _maxWidth ?? (_useDefaultMaxWidth ? 1100 : double.infinity), 
+          minHeight: _minHeight ?? 0.0,
+          maxHeight: _maxHeight ?? double.infinity
+        ),
+
+        child: child,
+      ),
     );
   }
 
@@ -217,6 +241,7 @@ class _EventCardState extends State<EventCard> {
             ),
           ],
         ),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -234,7 +259,7 @@ class _EventCardState extends State<EventCard> {
                   child: Column(
                     children: [
                       Text(
-                        '${e.date.day}',
+                        '${e.startDate.day}',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
@@ -244,7 +269,7 @@ class _EventCardState extends State<EventCard> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _months[e.date.month - 1],
+                        _months[e.startDate.month - 1],
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -284,7 +309,7 @@ class _EventCardState extends State<EventCard> {
             ),
             const SizedBox(height: 16),
             Text(
-              e.title,
+              e.name,
               style: const TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w800,
@@ -302,7 +327,7 @@ class _EventCardState extends State<EventCard> {
               ),
             ),
             const SizedBox(height: 16),
-            _InfoRow(icon: Icons.schedule_rounded, text: e.time),
+            _InfoRow(icon: Icons.schedule_rounded, text: e.startTime),
             const SizedBox(height: 6),
             _InfoRow(icon: Icons.place_rounded, text: e.location),
             const SizedBox(height: 18),
@@ -333,9 +358,24 @@ class _EventCardState extends State<EventCard> {
   //mainly to open a new tab to the next website
   void navigateToRegistrationPage() async {
     // TODO: navigate to a registration form or booking page.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Registration for "${widget.event.title}" coming soon')),
+    if(!widget.event.requiresRegistration){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration for "${widget.event.name}" coming soon')),
+      );
+    }
+
+
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => RegistrationCubit(widget.event),
+          child: EventRegisterationPage()
+        )
+      )
     );
+    
   }
 }
 

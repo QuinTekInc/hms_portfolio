@@ -1,13 +1,19 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hms_portfolio/bloc/events_bloc.dart';
+import 'package:hms_portfolio/components/alert.dart';
 import 'package:hms_portfolio/components/animations.dart';
 import 'package:hms_portfolio/components/button.dart';
 import 'package:hms_portfolio/components/card_containers.dart';
+import 'package:hms_portfolio/components/event_cards.dart';
 import 'package:hms_portfolio/components/page_footer.dart';
 import 'package:hms_portfolio/components/page_header.dart';
+import 'package:hms_portfolio/components/placeholders.dart';
 import 'package:hms_portfolio/components/responsive_util.dart';
 import 'package:hms_portfolio/components/text.dart';
 import 'package:hms_portfolio/models/models.dart';
+import 'package:shimmer/shimmer.dart';
 
 class EventsPage extends StatefulWidget {
   const new({super.key});
@@ -20,66 +26,17 @@ class _EventsPageState extends State<EventsPage> {
 
   int _selectedIndex = 0;
 
-  final sampleEvents = [
-    HospitalEvent(
-    title: 'Diabetes Awareness Talk',
-    description:
-        'Learn how to recognise early signs, manage blood sugar and eat well with our endocrinology team.',
-    date: DateTime(2026, 11, 7),
-    time: '10:00 AM',
-    location: 'Main Auditorium',
-    category: EventCategory.healthTalk,
-  ),
-    HospitalEvent(
-      title: 'Free Blood Pressure Screening',
-      description:
-          'Walk in for a quick, free check-up with our nurses. No appointment needed.',
-      date: DateTime(2026, 11, 12),
-      time: '8:00 AM',
-      location: 'Outpatient Lobby',
-      category: EventCategory.screening,
-    ),
-    HospitalEvent(
-      title: 'First Aid & CPR Workshop',
-      description:
-          'Hands-on training in life-saving skills for schools, workplaces and families.',
-      date: DateTime(2026, 11, 19),
-      time: '2:00 PM',
-      location: 'Training Room B',
-      category: EventCategory.training,
-    ),
-    HospitalEvent(
-      title: 'Community Health Walk',
-      description:
-          'Join staff and neighbours for a friendly 5 km walk promoting an active lifestyle.',
-      date: DateTime(2026, 11, 28),
-      time: '6:30 AM',
-      location: 'Hospital Gate',
-      category: EventCategory.community,
-    ),
-    HospitalEvent(
-      title: "Maternal & Child Health Day",
-      description:
-          'Talks on antenatal care, nutrition and immunisation, with free baby weighing.',
-      date: DateTime(2026, 12, 3),
-      time: '9:00 AM',
-      location: 'Maternity Wing',
-      category: EventCategory.healthTalk,
-    ),
-    HospitalEvent(
-      title: 'Free Eye & Vision Screening',
-      description:
-          'Get your eyes checked by our ophthalmology team and learn how to protect your sight.',
-      date: DateTime(2026, 12, 10),
-      time: '9:00 AM',
-      location: 'Eye Clinic',
-      category: EventCategory.screening,
-    ),
-  ];
+  final List<(String, IconData?, Color, EventCategory?)> eventCategories = [
+      ('All', null, Colors.blue.shade900, null), 
+      ...EventCategory.values.map(
+        (cat) => (cat.label, cat.icon, cat.color, cat))
+    ];
 
+  EventsLoaded? _loadedState;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold( 
       appBar: const PreferredSize(  
         preferredSize: Size.fromHeight(120),
@@ -102,7 +59,8 @@ class _EventsPageState extends State<EventsPage> {
           ),
 
 
-          if(!true) SliverToBoxAdapter(  
+          //check when there is a flagship event
+          SliverToBoxAdapter(  
             child: _buildFlagShipEvent(),
           ),
 
@@ -167,41 +125,32 @@ class _EventsPageState extends State<EventsPage> {
 
   Widget _buildCategoryChips(){
 
-    final eventCategories = <(String, IconData?, Color, EventCategory?)>[
-      ('All', null, Colors.blue.shade900, null), 
-      ...EventCategory.values.map((cat) => (cat.label, cat.icon, cat.color, cat))
-    ];
-
     return SectionContainer(
       backgroundColor: Colors.grey.shade200,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: 35, 
-            minHeight: 35,
-            maxWidth: 1100
-          ),
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            itemCount: eventCategories.length, 
-            itemBuilder: (_, index){
-      
-              final (label, icon, color, category) = eventCategories[index];
+      minHeight: 35,
+      maxHeight: 35,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemCount: eventCategories.length, 
+        itemBuilder: (_, index){
           
-              return CustomChip(  
-                text: label,
-                icon: icon,
-                hoverBackgroundColor: color.withAlpha(140),
-                selectedBackgroundColor: color,
-                isSelected: _selectedIndex == index,
-                onPressed: () => setState(() => _selectedIndex = index),
-              );
-              
-            }, 
-            separatorBuilder: (_, _) => SizedBox(width: 8,),
-          )
-        ),
+          final (label, icon, color, category) = eventCategories[index];
+      
+          return CustomChip(  
+            text: label,
+            icon: icon,
+            hoverBackgroundColor: color.withAlpha(140),
+            selectedBackgroundColor: color,
+            isSelected: _selectedIndex == index,
+            onPressed: () {
+              (context.read<EventsCubit>().state as EventsLoaded).applyFilter(category);
+              setState(() => _selectedIndex = index);
+            },
+          );
+          
+        }, 
+        separatorBuilder: (_, _) => SizedBox(width: 8,),
       ),
     );
   }
@@ -210,30 +159,117 @@ class _EventsPageState extends State<EventsPage> {
 
   Widget _buildFlagShipEvent(){
 
-    return SizedBox.shrink();
+    return BlocConsumer<EventsCubit, EventsState>( 
+      listener: (_, state){
+        if(state is EventsError) {
+          showAlertDialog(
+            context: context, 
+            alertType: AlertType.error,
+            contentText: state.message
+          );
+        }
+      },
+      builder: (_, state){
+
+        if(state is EventsInitial || state is EventsLoading){
+          return Shimmer(
+            gradient: LinearGradient(  
+              colors: [Colors.grey.shade500, Colors.grey.shade200]
+            ),
+            child: Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.3,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12)
+              ),
+            )
+          );
+        }
+
+
+        if(state is EventsError){
+          return SizedBox.shrink();
+        }
+
+
+        final flagshipEvent = (state as EventsLoaded).flagshipEvent;
+
+        if(flagshipEvent == null || _selectedIndex != 0){
+          return SizedBox.shrink();
+        }
+
+        return SectionContainer(
+          child: FlagshipEventCard(
+            hospitalEvent: flagshipEvent,
+            onTap: (newValue){},
+          ),
+        );
+      },
+    );
   }
 
 
 
   Widget _buildEventsView(){
-    
-    return SectionContainer(  
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: 1100, 
-          ),
-          child: ResponsiveGrid.builder(  
-            mainAxisExtent: 370,
-            itemCount: sampleEvents.length,
-            itemBuilder: (context, index) => revealAnimationWidget(
-              delay: Duration(milliseconds: 200 + index),
-              child: EventCard(event: sampleEvents[index],
+
+    return BlocBuilder<EventsCubit, EventsState>( 
+
+      builder: (_, state){
+        if(state is EventsInitial || state is EventsLoading){
+          return SectionContainer(
+            child: Shimmer(
+              gradient: LinearGradient(  
+                colors: [Colors.grey.shade50, Colors.grey.shade300]
+              ),
+              child: ResponsiveGrid.builder(  
+                itemCount: 5,
+                itemBuilder: (_, _) => Container(  
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12)
+                  ),
+                )
               )
             ),
+          );
+        }
+
+
+        if(state is EventsError){
+          return SizedBox.shrink();
+        }
+
+        _loadedState = (state as EventsLoaded);
+
+        final events = _loadedState!.eventsFilter;
+
+        if(events.isEmpty){
+          return  PlaceholderMessage(
+            title: 'No Events', 
+            message: 'All hospital events appear here.', 
+            maxWidth: 1100,
+          );
+        }
+
+
+        return SectionContainer(  
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 1100, 
+              ),
+              child: ResponsiveGrid.builder(  
+                mainAxisExtent: 370,
+                itemCount: events.length,
+                itemBuilder: (context, index) => revealAnimationWidget(
+                  delay: Duration(milliseconds: 200 + index),
+                  child: EventCard(event: events[index],
+                  )
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }

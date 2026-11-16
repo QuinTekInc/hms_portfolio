@@ -6,9 +6,6 @@ import '../models/models.dart';
 import 'text.dart';
 
 
-final _muted = Color(0xFF5B7480);
-  final Color _navy = Colors.blue.shade900;
-  final Color _ink = Color(0xFF0D2A4A);
 
 //===========================================================
 //NEWS CARD 
@@ -41,13 +38,16 @@ class _NewsCardState extends State<NewsCard> {
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
+
       child: GestureDetector(
         onTap: () => widget.onTap(a),
+
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOutCubic,
           transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
           clipBehavior: Clip.antiAlias,
+
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -57,7 +57,7 @@ class _NewsCardState extends State<NewsCard> {
             ),
             boxShadow: [
               BoxShadow(
-                color: _navy.withAlpha(_hover ? 40 : 12),
+                color: Colors.blue.shade900.withAlpha(_hover ? 40 : 12),
                 blurRadius: _hover ? 26 : 12,
                 offset: Offset(0, _hover ? 12 : 4),
               ),
@@ -100,7 +100,7 @@ class _NewsCardState extends State<NewsCard> {
                         Icon(
                           Icons.calendar_today_rounded,
                           size: 14, 
-                          color: _muted
+                          color: Constants.muted
                         ),
 
                         const SizedBox(width: 6),
@@ -109,20 +109,20 @@ class _NewsCardState extends State<NewsCard> {
                           formatDate(a.date),
                           fontSize: 13,
                           fontWeight: .w600,
-                          textColor: _muted,
+                          textColor: Constants.muted,
                         ),
                         const SizedBox(width: 10),
 
                         CustomText(
                           '•', 
-                          textColor: _muted
+                          textColor: Constants.muted
                         ),
                         const SizedBox(width: 10),
 
                         CustomText(
                           '${a.readMinutes} min read',
                           fontSize: 13,
-                          textColor: _muted,
+                          textColor: Constants.muted,
                         ),
                       ],
                     ),
@@ -134,7 +134,7 @@ class _NewsCardState extends State<NewsCard> {
                       overflow: TextOverflow.ellipsis,
                       fontSize: 18,
                       height: 1.3,
-                      textColor: _ink,
+                      textColor: Constants.ink,
                     ),
 
                     const SizedBox(height: 8),
@@ -146,7 +146,7 @@ class _NewsCardState extends State<NewsCard> {
                       overflow: TextOverflow.ellipsis,
                       fontSize: 14.5,
                       height: 1.55,
-                      textColor: _muted,
+                      textColor: Constants.muted,
                     ),
 
                     const SizedBox(height: 16),
@@ -159,7 +159,7 @@ class _NewsCardState extends State<NewsCard> {
                           style: TextStyle(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w800,
-                            color: _navy,
+                            color: Constants.muted,
                           ),
                         ),
 
@@ -170,7 +170,7 @@ class _NewsCardState extends State<NewsCard> {
                           child: Icon(
                             Icons.arrow_forward_rounded,
                             size: 18,
-                            color: _hover ? Colors.amber.shade800 : _navy,
+                            color: _hover ? Colors.amber.shade800 : Colors.blue.shade900,
                           ),
                         ),
                       ],
@@ -275,14 +275,12 @@ class _Pill extends StatelessWidget {
 
           const SizedBox(width: 6),
 
-          Text(
+          CustomText(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.3,
-              color: foreground,
-            ),
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.3,
+            textColor: foreground,
           ),
         ],
       ),
@@ -317,12 +315,14 @@ class _FeaturedCardState extends State<FeaturedNewsCard> {
           spacing: 8,
           runSpacing: 8,
           children: [
+
             _Pill(
               label: 'FEATURED',
               background: Colors.amber,
-              foreground: _navy,
+              foreground: Colors.blue.shade900,
               icon: Icons.star_rounded,
             ),
+
             _Pill(
               label: a.category.label,
               background: Colors.white.withAlpha(30),
@@ -331,42 +331,49 @@ class _FeaturedCardState extends State<FeaturedNewsCard> {
             ),
           ],
         ),
+
         const SizedBox(height: 16),
-        Text(
+
+        CustomText(
           a.title,
-          style: TextStyle(
-            fontSize: fluidInterpolation(context, 22, 32),
-            fontWeight: FontWeight.w800,
-            height: 1.2,
-            color: Colors.white,
-          ),
+          fontSize: fluidInterpolation(context, 22, 32),
+          height: 1.2,
+          textColor: Colors.white,
+          fontWeight: FontWeight.w800,
         ),
+
         const SizedBox(height: 10),
-        Text(
+
+
+        CustomText(
           a.excerpt,
-          style: TextStyle(
-            fontSize: 16,
-            height: 1.55,
-            color: Colors.white.withAlpha(215),
-          ),
+          fontSize: 16,
+          height: 1.55,
+          textColor: Colors.white.withAlpha(215),
+          
         ),
+
         const SizedBox(height: 14),
-        Text(
+
+
+        CustomText(
           '${formatDate(a.date)}  •  ${a.readMinutes} min read',
-          style: TextStyle(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w600,
-            color: Colors.white.withAlpha(180),
-          ),
+          fontSize: 13.5,
+          fontWeight: FontWeight.w600,
+          textColor: Colors.white.withAlpha(180),
+          
         ),
+
         const SizedBox(height: 20),
+
+
         FilledButton.icon(
           onPressed: () => widget.onTap(a),
           icon: const Icon(Icons.arrow_forward_rounded),
           label: const Text('Read the story'),
           style: FilledButton.styleFrom(
             backgroundColor: Colors.amber,
-            foregroundColor: _navy,
+            foregroundColor: Colors.blue.shade900,
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
             textStyle:
                 const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),

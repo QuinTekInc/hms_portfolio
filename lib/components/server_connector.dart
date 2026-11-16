@@ -2,9 +2,10 @@
 
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 
-const String baseUrl = 'http://127.0.0.1:8000'; //rename to httpUrl
+String baseUrl = dotenv.env['BACKEND_URL'] ?? 'http://127.0.0.1:8000/website';
 
 
 const Map<String, String> _headers = {
@@ -12,19 +13,15 @@ const Map<String, String> _headers = {
 };
 
 
-String concat(String other, {useCore = false}){
-  
-  if(useCore) return '$baseUrl/core/$other';
-  
-  return '$baseUrl/admin-api/$other';
+String concat(String other,){  
+  return '$baseUrl/$other';
 }
 
 
 
+Future<http.Response> getRequest({required String endpoint, dynamic body,}) async {
 
-Future<http.Response> getRequest({required String endpoint, dynamic body, useCore=false}) async {
-
-  final url = Uri.parse(concat(endpoint, useCore: useCore));
+  final url = Uri.parse(concat(endpoint));
 
   return http.get(
     url, 
@@ -33,9 +30,9 @@ Future<http.Response> getRequest({required String endpoint, dynamic body, useCor
 }
 
 
-Future<http.Response> postRequest({required String endpoint, required Object body, useCore=false}) async {
+Future<http.Response> postRequest({required String endpoint, required Object body,}) async {
 
-  final url = Uri.parse(concat(endpoint, useCore: useCore));
+  final url = Uri.parse(concat(endpoint,));
 
 
   return await http.post(
