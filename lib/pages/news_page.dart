@@ -201,24 +201,23 @@ class _NewsPageState extends State<NewsPage>{
 
   Widget _buildNewsContent(BuildContext context){
     return SectionContainer(
-      child: FractionallySizedBox(
-        widthFactor: fluidInterpolation(context, 1, 0.6),
-        child: AnimatedSize(
-          duration: const Duration(milliseconds: 300),
-          child: ResponsiveGrid.builder(
-            itemCount: sampleNews.length,
-            minItemWidth: 350,
-            itemBuilder: (_, index) => SizedBox(
-              height: 400,
-              child: revealAnimationWidget(
-                child: NewsCard(  
-                  article: sampleNews[index],
-                  onTap: (newValue){},
-                ),
-              )
-            ),
-          
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 300),
+        child: ResponsiveGrid.builder(
+          itemCount: sampleNews.length,
+          minItemWidth: 350,
+          itemBuilder: (_, index) => SizedBox(
+            height: 400,
+            child: revealAnimationWidget(
+              child: NewsCard(  
+                article: sampleNews[index],
+                onTap: (newValue){
+                  
+                },
+              ),
+            )
           ),
+        
         ),
       ),
     );

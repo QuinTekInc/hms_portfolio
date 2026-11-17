@@ -114,18 +114,38 @@ class HeaderText extends StatelessWidget {
 
 
 class Pill extends StatelessWidget {
+
+  final String label;
+  final Color background;
+  final Color foreground;
+  final IconData? icon;
+  final Color? borderColor;
+  final double? borderWidth;
+
+  final bool _isSectionTitle;
+
   const Pill({
     super.key,
     required this.label,
     required this.background,
     required this.foreground,
     required this.icon,
-  });
+    this.borderColor, 
+    this.borderWidth,
+  }): _isSectionTitle = false;
 
-  final String label;
-  final Color background;
-  final Color foreground;
-  final IconData icon;
+
+  Pill.sectionTitle({
+    super.key, 
+    Color color = Colors.amber, 
+    required this.label,
+  }) : borderWidth = 1.5,
+       icon = null, 
+       background = color.withAlpha(30), 
+       foreground = color, 
+       borderColor = color,
+       _isSectionTitle = true;
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,18 +154,24 @@ class Pill extends StatelessWidget {
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(999),
+        border: Border.all( 
+          color: borderColor ?? background,
+          width: borderWidth ?? 1.0
+        )
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
 
-          Icon(icon, size: 14, color: foreground),
 
-          const SizedBox(width: 6),
+          if(icon != null)...[
+            Icon(icon, size: 14, color: foreground),
+            const SizedBox(width: 6),
+          ],
 
           CustomText(
             label,
-            fontSize: 12,
+            fontSize: _isSectionTitle ? 16 : 12,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.3,
             textColor: foreground,
@@ -155,6 +181,7 @@ class Pill extends StatelessWidget {
     );
   }
 }
+
 
 
 //todo: custom text field

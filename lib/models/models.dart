@@ -1,14 +1,35 @@
 
 import 'package:flutter/material.dart';
 
-enum EventCategory { healthTalk, screening, training, community }
+enum EventCategory { 
+  healthTalk, screening, training, community, other;
+
+  static EventCategory fromTypeString(String typeString){
+    for(final category in EventCategory.values){
+      if(category.label == typeString) return category;
+    }
+
+    return other;
+  }
+  
+ }
 
 extension EventCategoryX on EventCategory {
+
+   String get typeString => switch (this) {
+        EventCategory.healthTalk => 'health_talk',
+        EventCategory.screening => 'screening',
+        EventCategory.training => 'training',
+        EventCategory.community => 'community',
+        EventCategory.other => 'other'
+      };
+
   String get label => switch (this) {
         EventCategory.healthTalk => 'Health Talk',
-        EventCategory.screening => 'Free Screening',
+        EventCategory.screening => 'Screening',
         EventCategory.training => 'Training',
         EventCategory.community => 'Community',
+        EventCategory.other => 'Other'
       };
 
   Color get color => switch (this) {
@@ -16,6 +37,7 @@ extension EventCategoryX on EventCategory {
         EventCategory.screening => const Color(0xFFD9534F),
         EventCategory.training => const Color(0xFF6C5CE7),
         EventCategory.community => const Color(0xFFEF8F2D),
+        EventCategory.other => Colors.blue.shade600
       };
 
   IconData get icon => switch (this) {
@@ -23,11 +45,12 @@ extension EventCategoryX on EventCategory {
         EventCategory.screening => Icons.monitor_heart_rounded,
         EventCategory.training => Icons.school_rounded,
         EventCategory.community => Icons.groups_rounded,
+        EventCategory.other => Icons.event_available_rounded
       };
 }
 
 
-enum EventStatus{pending, ongoing, past, cancelled, unkown}
+enum EventStatus{pending, ongoing, past, cancelled, unknown}
 
 extension EventStatusX on EventStatus{
   String get label => switch(this){
@@ -35,7 +58,7 @@ extension EventStatusX on EventStatus{
     EventStatus.ongoing => 'ongoing', 
     EventStatus.past => 'past',
     EventStatus.cancelled => 'cancelled', 
-    EventStatus.unkown => 'unkown'
+    EventStatus.unknown => 'unknown'
   };
 
   Color get color => switch(this){
@@ -43,9 +66,10 @@ extension EventStatusX on EventStatus{
     EventStatus.ongoing => Colors.green.shade900, 
     EventStatus.past => Colors.amber,
     EventStatus.cancelled => Colors.red.shade700, 
-    EventStatus.unkown => Colors.orange.shade700
+    EventStatus.unknown => Colors.orange.shade700
   };
 }
+
 
 class HospitalEvent {
   final String id;
@@ -61,6 +85,7 @@ class HospitalEvent {
   final String location;
   final bool isFlagshipEvent;
   final bool requiresRegistration;
+  final EventStatus status;
 
   const HospitalEvent({
     required this.id,
@@ -76,6 +101,7 @@ class HospitalEvent {
     required this.category,
     this.isFlagshipEvent = false, 
     this.requiresRegistration = false,
+    this.status = EventStatus.pending
   });
 
 
@@ -95,7 +121,7 @@ class HospitalEvent {
       startTime: '${now.hour % 12}:${now.minute} ${now.hour < 12 ? 'am':'pm'}', 
       endTime: jsonMap['end_time'],
       location: jsonMap['location'], 
-      category: EventCategory.screening,
+      category: EventCategory.fromTypeString(jsonMap['category']),
     );
   }
 }

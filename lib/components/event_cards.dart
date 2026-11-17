@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hms_portfolio/components/animations.dart';
 import 'package:hms_portfolio/components/constants.dart';
 import 'package:hms_portfolio/components/text.dart';
@@ -10,12 +11,10 @@ import 'package:hms_portfolio/models/models.dart';
 class FlagshipEventCard extends StatefulWidget {
 
   final HospitalEvent hospitalEvent;
-  final ValueChanged<HospitalEvent> onTap;
 
   const FlagshipEventCard({
     super.key, 
     required this.hospitalEvent, 
-    required this.onTap
   });  
 
   @override
@@ -99,15 +98,17 @@ class _FlagshipEventCardState extends State<FlagshipEventCard> {
 
 
         FilledButton.icon(
-          onPressed: () => widget.onTap(e),
+          onPressed: _viewFeaturedEventDetails,
           icon: const Icon(Icons.arrow_forward_rounded),
-          label: const Text('View event details'),
+          label: const CustomText(
+            'View event details', 
+            fontSize: 15,
+            fontWeight: .w800,
+          ),
           style: FilledButton.styleFrom(
             backgroundColor: Colors.amber,
             foregroundColor: Colors.blue.shade900,
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-            textStyle:
-                const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -176,6 +177,10 @@ class _FlagshipEventCardState extends State<FlagshipEventCard> {
       ),
     );
   }
+
+
+
+  void _viewFeaturedEventDetails() async => context.go('events/${widget.hospitalEvent.id}');
 }
 
 //for showing stuff like date, time and location
@@ -257,6 +262,213 @@ class _EventVisual extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+
+//==============================================================================
+//REGULAR EVENTS CARD
+//==============================================================================
+class EventCard extends StatefulWidget {
+
+  final HospitalEvent event;
+
+  const EventCard({super.key, required this.event});
+
+  @override
+  State<EventCard> createState() => _EventCardState();
+}
+
+class _EventCardState extends State<EventCard> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final e = widget.event;
+    final color = e.category.color;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+        transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _hover ? color.withAlpha(120) : const Color(0xFFE3ECEF),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(_hover ? 30 : 12),
+              blurRadius: _hover ? 24 : 12,
+              offset: Offset(0, _hover ? 12 : 4),
+            ),
+          ],
+        ),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Date badge
+                Container(
+                  width: 60,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(28),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Column(
+                    children: [
+
+                      CustomText(
+                        '${e.startDate.day}',
+                        fontSize: 22,
+                        fontWeight: .w800, 
+                        textColor: color,
+                        height: 1,
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      CustomText(
+                        months[e.startDate.month - 1],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1,
+                        textColor: color,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Spacer(),
+                // Category tag
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(28),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+
+                      Icon(e.category.icon, size: 14, color: color),
+
+                      const SizedBox(width: 6),
+
+                      CustomText(
+                        e.category.label,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        textColor: color,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+
+            CustomText(
+              e.name,
+              fontSize: 19,
+              fontWeight: FontWeight.w800,
+              height: 1.25,
+              textColor: Color(0xFF12303A), 
+            ),
+
+            const SizedBox(height: 8),
+
+            CustomText(
+              e.description,
+              fontSize: 14.5,
+              height: 1.5,
+              textColor: Color(0xFF5B7480),
+              
+            ),
+
+            const SizedBox(height: 16),
+
+            _InfoRow(icon: Icons.schedule_rounded, text: e.startTime),
+
+            const SizedBox(height: 6),
+
+            _InfoRow(icon: Icons.place_rounded, text: e.location),
+
+            const SizedBox(height: 18),
+
+            Spacer(),
+            
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: color,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: navigateToRegistrationPage,
+                child: const CustomText('Register interest'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  //mainly to open a new tab to the next website
+  void navigateToRegistrationPage() async {
+    // TODO: navigate to a registration form or booking page.
+    context.push('events/${widget.event.id}/');
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.icon, required this.text});
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+
+        Icon(
+          icon, 
+          size: 18, 
+          color: const Color(0xFF7D93A0)
+        ),
+
+        const SizedBox(width: 8),
+
+        Expanded(
+          child: CustomText(
+            text,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            textColor: Color(0xFF365564),
+            
+          ),
+        ),
+      ],
     );
   }
 }

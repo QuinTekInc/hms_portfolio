@@ -201,7 +201,6 @@ class _EventsPageState extends State<EventsPage> {
         return SectionContainer(
           child: FlagshipEventCard(
             hospitalEvent: flagshipEvent,
-            onTap: (newValue){},
           ),
         );
       },

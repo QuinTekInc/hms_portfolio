@@ -39,6 +39,11 @@ class EventsLoaded extends EventsState{
 
   void applyFilter(EventCategory? eventCategory) => _eventCategory = eventCategory;
 
+  HospitalEvent? getEventById(String eventId){
+    return _events.where(
+      (event) => event.id == eventId).toList().firstOrNull;
+  }
+
 }
 
 class EventsError extends EventsState{
@@ -108,6 +113,11 @@ class RegistrationCubit extends Cubit<RegistrationState>{
 
   Future<void> fetchRegistrationFields() async {
     emit(RegistrationLoading());
+
+    if(!hospitalEvent.requiresRegistration){
+      emit(RegistrationLoaded([]));
+      return;
+    }
 
     try{
 

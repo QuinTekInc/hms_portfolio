@@ -155,12 +155,13 @@ final List<NewsArticle> sampleNews = [
 
 
 final sampleEvents = [
+
   HospitalEvent(
     id: '1',
     name: 'Diabetes Awareness Talk',
     description:
         'Learn how to recognise early signs, manage blood sugar and eat well with our endocrinology team.',
-    startDate: DateTime(2026, 11, 7),
+    startDate: DateTime(2026, 12, 7),
     startTime: '10:00 AM',
     location: 'Main Auditorium',
     category: EventCategory.healthTalk,
@@ -225,7 +226,7 @@ final sampleEvents = [
   ),
 ];
 
-const months = [
+const List<String> months = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ];

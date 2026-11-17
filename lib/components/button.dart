@@ -183,13 +183,17 @@ class CustomCheckBox extends StatelessWidget {
         Checkbox(
           value: value, 
           onChanged: onChanged,
-          activeColor: Colors.green,
+          activeColor: Colors.blue.shade900,
         ),
 
-        CustomText(
-          text, fontSize: 14,
-          fontWeight: FontWeight.w500,
-          softwrap: true
+        Expanded(
+          child: CustomText(
+            text, 
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            softwrap: true,
+            padding: EdgeInsets.zero,
+          ),
         )
       ],
     );
@@ -371,6 +375,7 @@ class DropdownController<T>{
   DropdownController({this.value});
 
   void reset() => value = null;
+  void dispose() => value = null;
 
 }
 

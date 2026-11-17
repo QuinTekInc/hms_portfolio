@@ -1,7 +1,10 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:hms_portfolio/bloc/events_bloc.dart';
 import 'package:hms_portfolio/components/page_header.dart';
 import 'package:hms_portfolio/pages/claude/claude_appointment.dart';
+import 'package:hms_portfolio/pages/event_registeration_page.dart';
 import 'package:hms_portfolio/pages/events_page.dart';
 import 'package:hms_portfolio/pages/gallery_page.dart';
 import 'package:hms_portfolio/components/text.dart';
@@ -57,14 +60,27 @@ final appRouter = GoRouter(
       name: 'events',
       builder: (context, state){
         return const EventsPage();
-      }
-    ),
-
-    GoRoute(
-      path: '/programming',
-      builder: (context, state) {
-        return Container(child: Text('This is the programming and algorithms'));
       },
+
+      routes: [
+        GoRoute(  
+          path: ':id', 
+          name: 'event-details', 
+          builder: (context, state){
+
+            final eventId = state.pathParameters['id'] ?? '';
+
+            final hospitalEvent = (context.read<EventsCubit>().state as EventsLoaded).getEventById(eventId);
+
+            if(hospitalEvent == null) return errorPage.Error404Page();
+
+            return BlocProvider(
+              create: (_) => RegistrationCubit(hospitalEvent)..fetchRegistrationFields(),
+              child: EventRegisterationPage(),
+            );
+          }
+        )
+      ]
     ),
   ],
 
